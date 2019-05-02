@@ -54,15 +54,17 @@ void		read_map(t_filler *f)
 	char	*tmp;
 	int		i;
 
-	i = 0;
+	i = -1;
+	tmp = NULL;
 	get_next_line(0, &tmp);
 	ft_strdel(&tmp);
 	get_next_line(0, &tmp);
 	ft_strdel(&tmp);
-	while (i < f->map_size.y && (get_next_line(0, &tmp) > 0))
+	while (++i < f->map_size.y && (get_next_line(0, &tmp) > 0))
 	{
 		ft_strdel(&f->map[i]);
-		f->map[i++] = ft_strchr(tmp, ' ');
+		f->map[i] = ft_strdup(ft_strchr(tmp, ' ') + 1);
+		ft_strdel(&tmp);
 	}
 	get_position(f, 0);
 }

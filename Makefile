@@ -44,7 +44,7 @@ CC			?=	cc
 
 INCFLAG		:=	-I $(INCDIR) $(LIB_INC)
 
-STDFLAG		?=	-ansi
+STDFLAG		?=	-ansi -Wno-comment
 WFLAGS		?=	-Wall -Wextra -Werror -pedantic
 CFLAGS		=	$(WFLAGS) $(INCFLAG) $(STDFLAG)
 
@@ -53,7 +53,7 @@ DEPFLAG		:=	-MM $(INCFLAG)
 
 LD			:=	$(CC)
 LDFLAG		=	$(LIB_LINK)
-LDFLAG		+=	-Wno-unused-command-line-argument $(WFLAGS)
+LDFLAG		+=	-Wno-unused-command-line-argument -Wno-comment $(WFLAGS)
 
 #############################
 #    MAKEFILE VARIABLES     #

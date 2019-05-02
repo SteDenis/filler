@@ -77,11 +77,16 @@ int			create_map(t_filler *f)
 	int		i;
 	char	*line;
 
-	i = 0;
+	i = -1;
+	line = NULL;
 	if (!(f->map = (char**)malloc(sizeof(char*) * f->map_size.y)))
 		return (0);
-	while (i < f->map_size.y && (get_next_line(0, &line) > 0))
-		f->map[i++] = ft_strchr(line, ' ');
+	while (++i < f->map_size.y && (get_next_line(0, &line) > 0))
+	{
+		f->map[i] = ft_strdup(ft_strchr(line, ' ') + 1);
+		ft_strdel(&line);
+	}
+	ft_strdel(&line);
 	f->map[i] = NULL;
 	if (i != f->map_size.y)
 	{
