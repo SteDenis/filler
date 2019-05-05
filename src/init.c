@@ -21,20 +21,20 @@ int			init_player(t_filler *f)
 	char	*tmp;
 
 	tmp = NULL;
-	if ((get_next_line(0, &player) <= 0))
+	if ((get_next_line(0, &player) < 0))
 		return (0);
 	if ((tmp = ft_strchr(player, 'p')))
 		f->player = ft_atoi(&tmp[1]);
 	ft_strdel(&player);
 	if (f->player == 1)
 	{
-		f->ennemy = 'x';
-		f->our = 'o';
+		ft_strcpy(f->ennemy, "xX");
+		ft_strcpy(f->our, "oO");
 	}
 	else if (f->player == 2)
 	{
-		f->ennemy = 'o';
-		f->our = 'x';
+		ft_strcpy(f->ennemy, "oO");
+		ft_strcpy(f->our, "xX");
 	}
 	else
 		return (0);
@@ -51,7 +51,7 @@ int			init_map(t_filler *f)
 		return (0);
 	if ((tmp = ft_strchr(map, ' ')))
 		f->map_size.y = ft_atoi(&tmp[1]);
-	if (tmp && (tmp = ft_strchr(tmp, ' ')))
+	if (tmp && (tmp = ft_strchr(tmp + 1, ' ')))
 		f->map_size.x = ft_atoi(&tmp[1]);
 	ft_strdel(&map);
 	if ((get_next_line(0, &map) <= 0))
@@ -96,7 +96,7 @@ int			create_map(t_filler *f)
 	return (1);
 }
 
-int			get_position(t_filler *f, int maj)
+int			get_position(t_filler *f)
 {
 	int		i;
 	char	*tmp;
@@ -104,12 +104,12 @@ int			get_position(t_filler *f, int maj)
 	i = -1;
 	while (f->map[++i])
 	{
-		if ((tmp = ft_strchr(f->map[i], f->ennemy - maj)))
+		if ((tmp = ft_strchr(f->map[i], f->ennemy[1])))
 		{
 			f->last_ennemy.x = tmp - f->map[i];
 			f->last_ennemy.y = i;
 		}
-		if ((tmp = ft_strchr(f->map[i], f->our - maj)))
+		if ((tmp = ft_strchr(f->map[i], f->our[1])))
 		{
 			f->last_player.x = tmp - f->map[i];
 			f->last_player.y = i;
@@ -131,7 +131,7 @@ int			init_game(t_filler *f)
 		return (0);
 	if (f->map_size.y < 0 || f->map_size.x < 0 || !(create_map(f)))
 		return (0);
-	if (!(get_position(f, 32)))
+	if (!(get_position(f)))
 		return (0);
 	return (1);
 }

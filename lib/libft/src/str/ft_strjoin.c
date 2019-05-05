@@ -3,25 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fstadelw <fstadelw@student.42.fr>          +#+  +:+       +#+        */
+/*   By: stdenis <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/08 17:22:01 by fstadelw          #+#    #+#             */
-/*   Updated: 2018/12/19 11:04:18 by fstadelw         ###   ########.fr       */
+/*   Created: 2018/11/11 12:55:37 by stdenis           #+#    #+#             */
+/*   Updated: 2018/11/11 13:31:44 by stdenis          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char		*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-	char	*rtn;
-	size_t	s1_len;
+	char	*new;
+	size_t	ls1;
+	size_t	ls2;
 
-	s1_len = ft_strlen(s1);
-	rtn = ft_strnew(s1_len + ft_strlen(s2));
-	if (rtn == (char *)NULL)
-		return ((char *)NULL);
-	ft_strcpy(rtn, s1);
-	ft_strcpy(&rtn[s1_len], s2);
-	return (rtn);
+	if (s1 == NULL || s2 == NULL)
+		return (NULL);
+	ls1 = ft_strlen(s1);
+	ls2 = ft_strlen(s2);
+	if (!(new = ft_strnew(ls1 + ls2)))
+		return (NULL);
+	new = ft_strcpy(new, s1);
+	new = ft_strcat(new, s2);
+	return (new);
 }

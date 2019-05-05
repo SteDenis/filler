@@ -44,7 +44,7 @@ CC			?=	cc
 
 INCFLAG		:=	-I $(INCDIR) $(LIB_INC)
 
-STDFLAG		?=	-ansi -Wno-comment
+STDFLAG		?=	-std=gnu11 -Wno-comment
 WFLAGS		?=	-Wall -Wextra -Werror -pedantic
 CFLAGS		=	$(WFLAGS) $(INCFLAG) $(STDFLAG)
 
@@ -181,10 +181,8 @@ re:		fclean all
 fre: clear sclean all
 
 test:
-	@ $(MAKE) -C $(TESTDIR) --no-print-directory fast
+	@ ./resources/filler_vm -f resources/maps/map00 -p2 ./std.filler -p1 ./std.filler
 
-full-test:
-	@ $(MAKE) -C $(TESTDIR) --no-print-directory
 
 #############################
 #          SETTING          #

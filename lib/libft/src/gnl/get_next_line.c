@@ -31,7 +31,7 @@ static	int		ft_check_charriot(char *buff, char **res)
 			ft_strdel(&s);
 		return (-1);
 	}
-	ft_strdel(&tofree);
+/*	ft_strdel(&tofree);*/
 	if (tmp != NULL)
 	{
 		ft_strdel(&s);

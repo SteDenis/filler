@@ -19,13 +19,21 @@ typedef struct		s_xy
 	int		y;
 }					t_xy;
 
+typedef struct		s_xy_res
+{
+	int		x;
+	int		y;
+	int		value;
+}					t_xy_res;
+
 typedef struct		s_filler
 {
 	int		player;
-	char	ennemy;
-	char 	our;
+	char	ennemy[3];
+	char 	our[3];
 	char	**map;
 	char	**piece;
+	int		fd;
 	t_xy	map_size;
 	t_xy	piece_size;
 	t_xy	last_ennemy;
@@ -33,5 +41,5 @@ typedef struct		s_filler
 }					t_filler;
 
 int				init_game(t_filler *f);
-int				get_position(t_filler *f, int maj);
+int				get_position(t_filler *f);
 #endif

@@ -16,7 +16,7 @@
 # include <sys/types.h>
 # include <stddef.h>
 
-# define BUFF_SIZE 2048
+# define BUFF_SIZE 1
 
 int				get_next_line(const int fd, char **line);
 /*
