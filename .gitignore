@@ -1,0 +1,23 @@
+### Program ###
+/std.filler
+
+### Build ###
+# Temporary build files
+/bin/
+
+### Debug files ###
+.gdb_history
+*.dSYM/
+*_files/
+
+### macOS ###
+# General
+.DS_Store
+
+### CLion ###
+.idea/
+
+### Emacs ###
+*~
+\#*\#
+.\#*

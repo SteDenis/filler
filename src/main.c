@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "filler.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -25,42 +24,57 @@ int			get_piece(t_filler *f)
 
 	tmp = NULL;
 	i = -1;
-	if ((get_next_line(0, &piece) <= -1))
+	if ((get_next_line(0, &piece)) <= 0)
 		return (0);
 	if ((tmp = ft_strchr(piece, ' ')))
 		f->piece_size.y = ft_atoi(&tmp[1]);
-	if (tmp && (tmp = ft_strchr(tmp, ' ')))
+	if (tmp && (tmp = ft_strchr(tmp + 1, ' ')))
 		f->piece_size.x = ft_atoi(&tmp[1]);
 	ft_strdel(&piece);
 	if (f->piece_size.x < 0 || f->piece_size.y < 0)
 		return (0);
-	if (!(f->piece = (char**)malloc(sizeof(char*) * f->piece_size.y)))
+	if (!(f->piece = (char**)malloc(sizeof(char*) * f->piece_size.y + 1)))
 		return (0);
-	while (++i < f->piece_size.y && (get_next_line(0, &piece) > 0))
+	ft_tabset(f->piece, NULL, f->piece_size.y + 1);
+	while (++i < f->piece_size.y && (get_next_line(0, &piece)) > 0)
 	{
-		f->piece[i] = ft_strdup(piece);
-		ft_strdel(&piece);
+		if (ft_strlen(piece) != (size_t)f->piece_size.x)
+			return (0);
+		f->piece[i] = piece;
 	}
-	f->piece[i] = NULL;
+	if (i != f->piece_size.y)
+		return (0);
 	return (1);
 }
 
-void		read_map(t_filler *f)
+int		read_map(t_filler *f)
 {
 	char	*tmp;
+	char	*line;
 	int		i;
 
 	i = -1;
 	tmp = NULL;
-	get_next_line(0, &tmp);
+	if ((get_next_line(0, &tmp)) <= 0)
+		return (0);
 	ft_strdel(&tmp);
-	get_next_line(0, &tmp);
+	if ((get_next_line(0, &tmp)) <= 0)
+		return (0);
 	ft_strdel(&tmp);
 	while (++i < f->map_size.y && (get_next_line(0, &tmp) > 0))
 	{
-		f->map[i] = ft_strcpy(f->map[i], ft_strchr(tmp, ' ') + 1);
+		line = ft_strchr(tmp, ' ');
+		if (!line || (ft_strlen(line + 1) != (size_t)f->map_size.x))
+		{
+			ft_strdel(&tmp);
+			return (0);
+		}
+		f->map[i] = ft_strcpy(f->map[i], line + 1);
 		ft_strdel(&tmp);
 	}
+	if (i != f->map_size.y)
+		return (0);
+	return (1);
 }
 
 void 	test2(t_filler *f, t_xy_res place)
@@ -71,17 +85,6 @@ void 	test2(t_filler *f, t_xy_res place)
 	ft_putnbr(place.x);
 	ft_putchar('\n');
 }
-
-
-void 	test(t_filler *f, t_xy place)
-{
-	(void)f;
-	ft_putnbr(place.y);
-	ft_putchar(' ');
-	ft_putnbr(place.x);
-	ft_putchar('\n');
-}
-
 
 int			estimate_value(t_filler *f, int y, int x)
 {
@@ -97,14 +100,13 @@ int			estimate_value(t_filler *f, int y, int x)
 		j = x + 1;
 		while (j >= x - 1)
 		{
-			coord.y = i ;
-			coord.x = j ;
-			if (coord.x >= 0 && coord.y >= 0 && coord.x <= f->map_size.x && coord.y < f->map_size.y)
+			coord.y = i;
+			coord.x = j;
+			if (coord.x >= 0 && coord.y >= 0
+				&& coord.x <= f->map_size.x && coord.y < f->map_size.y)
 			{
-				if (f->map[coord.y][coord.x] == f->ennemy[1])
-				{
+				if (f->map[coord.y][coord.x] == f->ennemy)
 					count++;
-				}
 			}
 			j--;
 		}
@@ -120,23 +122,25 @@ int			put_piece(t_filler *f, t_xy pos, int *value)
 	int		count;
 
 	count = 0;
-	i = -1;
-	while (f->piece[++i])
+	i = 0;
+	while (i < f->piece_size.y)
 	{
-		j = -1;
-		while (f->piece[i][++j])
+		j = 0;
+		while (j < f->piece_size.x)
 		{
 			if (f->piece[i][j] == '*')
 			{
-				if (pos.y + i >= f->map_size.y || pos.x + j > f->map_size.x)
+				if (pos.y + i >= f->map_size.y || pos.x + j >= f->map_size.x)
 					return (0);
-				if (ft_strchr(f->our, f->map[pos.y + i][pos.x + j]) && ++count > 1)
+				if (f->map[pos.y + i][pos.x + j] == f->our && ++count > 1)
 					return (0);
-				if (ft_strchr(f->ennemy, f->map[pos.y + i][pos.x + j]))
+				if (f->map[pos.y + i][pos.x + j] == f->ennemy)
 					return (0);
 				*value += estimate_value(f, pos.y + i, pos.x + j);
 			}
+			j++;
 		}
+		i++;
 	}
 	if (count < 1)
 		return (0);
@@ -151,17 +155,17 @@ t_xy_res			try_it(t_filler *f, t_xy pos)
 	int i;
 	int j;
 
-	i = -1;
-	while (f->piece[++i])
+	i = 0;
+	while (i < f->piece_size.y)
 	{
-		j = -1;
-		while (f->piece[i][++j])
+		j = 0;
+		while (j < f->piece_size.x)
 		{
 			res.y = pos.y - i;
 			res.x = pos.x - j;
 			value = 0;
 			if (res.x >= 0 && res.y >= 0 && f->piece[i][j] == '*'
-				&& res.y < f->map_size.y && res.x <= f->map_size.x)
+				&& res.y < f->map_size.y && res.x < f->map_size.x)
 			{
 				if (put_piece(f, res, &value))
 				{
@@ -170,9 +174,10 @@ t_xy_res			try_it(t_filler *f, t_xy pos)
 					res2.value = value;
 					return (res2);
 				}
-
 			}
+			j++;
 		}
+		i++;
 	}
 	res2.x = -1;
 	res2.y = -1;
@@ -188,12 +193,12 @@ int			try_to_place_up(t_filler *f)
 	place.y = 0;
 	while (place.y < f->map_size.y)
 	{
-		place.x = f->last_ennemy.x > f->last_player.x ? f->map_size.x : 0;
+		place.x = (f->last_ennemy.x > f->last_player.x) ? f->map_size.x - 1 : 0;
 		if (place.x > 0)
 		{
 			while(place.x >= 0)
 			{
-				if ((ft_strchr(f->our, f->map[place.y][place.x])) != NULL)
+				if (f->map[place.y][place.x] == f->our)
 				{
 					tmp = try_it(f, place);
 					if (tmp.x >= 0 && tmp.y >= 0)
@@ -207,9 +212,9 @@ int			try_to_place_up(t_filler *f)
 		}
 		else
 		{
-			while(place.x <= f->map_size.x)
+			while(place.x < f->map_size.x)
 			{
-				if ((ft_strchr(f->our, f->map[place.y][place.x])) != NULL)
+				if (f->map[place.y][place.x] == f->our)
 				{
 					tmp = try_it(f, place);
 					if (tmp.x >= 0 && tmp.y >= 0)
@@ -223,8 +228,9 @@ int			try_to_place_up(t_filler *f)
 		}
 		place.y++;
 	}
-	ft_putstr("0 0\n");
-	dprintf(f->fd, "place %d %d\n", 0, 0);
+	write(1, "0 0\n", 4);
+	dprintf(f->fd, "up place %d %d\n", 0, 0);
+	exit(1);
 	return (0);
 }
 
@@ -236,12 +242,12 @@ int			try_to_place_bottom(t_filler *f)
 	place.y = f->map_size.y - 1;
 	while (place.y >= 0)
 	{
-		place.x = f->last_ennemy.x > f->last_player.x ? f->map_size.x : 0;
+		place.x = (f->last_ennemy.x > f->last_player.x) ? f->map_size.x - 1 : 0;
 		if (place.x > 0)
 		{
 			while(place.x >= 0)
 			{
-				if ((ft_strchr(f->our, f->map[place.y][place.x])) != NULL)
+				if (f->map[place.y][place.x] == f->our)
 				{
 					tmp = try_it(f, place);
 					if (tmp.x >= 0 && tmp.y >= 0)
@@ -255,9 +261,9 @@ int			try_to_place_bottom(t_filler *f)
 		}
 		else
 		{
-			while(place.x <= f->map_size.x)
+			while(place.x < f->map_size.x)
 			{
-				if ((ft_strchr(f->our, f->map[place.y][place.x])) != NULL)
+				if (f->map[place.y][place.x] == f->our)
 				{
 					tmp = try_it(f, place);
 					if (tmp.x >= 0 && tmp.y >= 0)
@@ -271,8 +277,9 @@ int			try_to_place_bottom(t_filler *f)
 		}
 		place.y--;
 	}
-	ft_putstr("0 0\n");
-	dprintf(f->fd, "place %d %d\n", 0, 0);
+	write(1, "0 0\n", 4);
+	dprintf(f->fd, "bot place %d %d\n", 0, 0);
+	exit(1);
 	return (0);
 }
 
@@ -284,12 +291,14 @@ int			try_to_place_near(t_filler *f)
 
 	place.y = 0;
 	res.value = -1;
+	res.x = 0;
+	res.y = 0;
 	while (place.y < f->map_size.y)
 	{
 			place.x = f->map_size.x - 1;
 			while(place.x >= 0)
 			{
-				if ((ft_strchr(f->our, f->map[place.y][place.x])) != NULL)
+				if (f->map[place.y][place.x] == f->our)
 				{
 					tmp = try_it(f, place);
 					if (tmp.x >= 0 && tmp.y >= 0)
@@ -321,6 +330,12 @@ int			try_to_place_near(t_filler *f)
 	return (0);
 }
 
+void		free_piece(t_filler *f)
+{
+	f->piece_size.x = -1;
+	f->piece_size.y = -1;
+	ft_arrdel(&f->piece);
+}
 
 int			main(void)
 {
@@ -334,9 +349,14 @@ int			main(void)
 	try_to_place_near(&f);
 	while (1)
 	{
-		read_map(&f);
-		get_piece(&f);
+		if (!(read_map(&f)))
+			break ;
+		free_piece(&f);
+		if (!(get_piece(&f)))
+			break ;
 		try_to_place_near(&f);
 	}
+	free_piece(&f);
+	ft_arrdel(&f.map);
 	return (0);
 }

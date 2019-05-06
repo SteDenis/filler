@@ -15,34 +15,35 @@ NAME	= std.filler
 SRC		:=	\
 	main.c				\
 	init.c				\
+	\
+	utility/ft_arrdel.c		\
+	utility/ft_atoi.c		\
+	utility/ft_memset.c		\
+	utility/ft_putchar.c	\
+	utility/ft_putnbr.c		\
+	utility/ft_strchr.c		\
+	utility/ft_strcpy.c		\
+	utility/ft_strdel.c		\
+	utility/ft_strdup.c		\
+	utility/ft_strjoin.c	\
+	utility/ft_strlen.c		\
+	utility/ft_strnew.c		\
+	utility/ft_strsub.c		\
+	utility/get_next_line.c	\
 
 SRCDIR	:=	src
 INCDIR	:=	inc
 LIBDIR	:=	lib
-TESTDIR	:=	test
 
 BUILDDIR	:=	bin
 OBJDIR		:=	$(BUILDDIR)/obj
 DBGDIR		:=	$(BUILDDIR)/debug
 DEPDIR		:=	$(BUILDDIR)/dep
 
-#### LIBRARY ####
-# Printf
-LIBFT_PRTF		:=	libftprintf.a
-LIBFT_PRTF_PATH :=  $(LIBDIR)/ft_printf
-LIB_LINK		:= -L $(LIBFT_PRTF_PATH) -l ftprintf
-LIB_INC			:= -I $(LIBFT_PRTF_PATH)/inc
-
-# Libft
-LIBFT		:=	libft.a
-LIBFT_PATH	:= $(LIBDIR)/libft
-LIB_LINK	+= -L $(LIBFT_PATH) -l ft
-LIB_INC		+= -I $(LIBFT_PATH)/inc
-
 #### COMPILER ####
 CC			?=	cc
 
-INCFLAG		:=	-I $(INCDIR) $(LIB_INC)
+INCFLAG		:=	-I $(INCDIR)
 
 STDFLAG		?=	-std=gnu11 -Wno-comment
 WFLAGS		?=	-Wall -Wextra -Werror -pedantic
@@ -52,7 +53,6 @@ DEPGEN		:=	$(CC)
 DEPFLAG		:=	-MM $(INCFLAG)
 
 LD			:=	$(CC)
-LDFLAG		=	$(LIB_LINK)
 LDFLAG		+=	-Wno-unused-command-line-argument -Wno-comment $(WFLAGS)
 
 #############################
@@ -83,7 +83,7 @@ KO			= 		$(NO_COLOR)[\033[00;31mKO$(NO_COLOR)]
 #### COMPILE ####
 all: $(NAME)
 
-$(NAME):	$(OBJ)| $(LIBFT_PATH)/$(LIBFT) $(LIBFT_PRTF_PATH)/$(LIBFT_PRTF)
+$(NAME):	$(OBJ)
 	@ echo "$(OP_COLOR) building $(NAME)$(NO_COLOR)"
 	@ $(LD) -o $(NAME) $(OBJ) $(LDFLAG)
 	@ printf "$(DONE)$(OP_COLOR)$(NAME)$(NO_COLOR)\n"
@@ -95,12 +95,6 @@ $(OBJDIR)/%.o:	$(SRCDIR)/%.c | $(OBJDIR) $(DEPDIR)
 		|| (printf "$(KO)	<-  $(COLOR)$<$(NO_COLOR)\n" ; false)
 	@ $(DEPGEN) -c $< $(DEPFLAG) -MQ $@ \
 			> $(subst $(SRCDIR), $(DEPDIR), $(<:.c=.d))
-
-$(LIBFT_PATH)/$(LIBFT):
-	@ $(MAKE) -C $(LIBFT_PATH) --no-print-directory
-
-$(LIBFT_PRTF_PATH)/$(LIBFT_PRTF):
-	@ $(MAKE) -C $(LIBFT_PRTF_PATH) --no-print-directory
 
 # Dir created to store build cache
 $(OBJDIR):
@@ -168,20 +162,12 @@ lre: lfclean all
 
 #### MANDATORY ####
 clean: lclean
-	@ $(MAKE) -C $(LIBFT_PATH) --no-print-directory clean
-	@ $(MAKE) -C $(TESTDIR) --no-print-directory clean
-	@ $(MAKE) -C $(LIBFT_PRTF_PATH) --no-print-directory clean
 
 fclean:	lfclean
-	@ $(MAKE) -C $(LIBFT_PATH) --no-print-directory fclean
-	@ $(MAKE) -C $(LIBFT_PRTF_PATH) --no-print-directory fclean
 
 re:		fclean all
 
 fre: clear sclean all
-
-test:
-	@ ./resources/filler_vm -f resources/maps/map00 -p2 ./std.filler -p1 ./std.filler
 
 
 #############################
@@ -191,9 +177,8 @@ test:
 .PHONY: all re
 .PHONY: debug rdebug debugclean
 .PHONY: warn
-.PHONY: lclean lfclean lre val exe fre
-.PHONY: clear sclean clean fclean save
-.PHONY: full-test test save val exe fre
+.PHONY: lclean lfclean lre
+.PHONY: clear sclean clean fclean
 
 #############################
 #         DEPENDENCY        #
