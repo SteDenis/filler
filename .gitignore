@@ -1,5 +1,7 @@
 ### Program ###
 /std.filler
+filler.trace
+log
 
 ### Build ###
 # Temporary build files
