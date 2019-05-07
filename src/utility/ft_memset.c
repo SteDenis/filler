@@ -17,9 +17,10 @@ void	ft_tabset(char **arr, void *val, size_t n)
 	size_t			i;
 
 	i = 0;
+	(void)val;
 	while (i < n)
 	{
-		arr[i] = val;
+		arr[i] = NULL;
 		i++;
 	}
 }

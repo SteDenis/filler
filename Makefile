@@ -15,6 +15,8 @@ NAME	= std.filler
 SRC		:=	\
 	main.c				\
 	init.c				\
+	misc.c				\
+	placement.c			\
 	\
 	utility/ft_arrdel.c		\
 	utility/ft_atoi.c		\

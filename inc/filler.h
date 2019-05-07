@@ -11,41 +11,56 @@
 /* ************************************************************************** */
 
 #ifndef FILLER_H
-#define FILLER_H
+# define FILLER_H
 
 # include <stdlib.h>
-
 # define BUFF_SIZE 128
 
-typedef struct		s_xy
-{
-	int		x;
-	int		y;
-}					t_xy;
-
-typedef struct		s_xy_res
+typedef struct	s_xy
 {
 	int		x;
 	int		y;
 	int		value;
-}					t_xy_res;
+}				t_xy;
 
-typedef struct		s_filler
+typedef struct	s_filler
 {
-	int		player;
+	int		p;
 	char	ennemy;
-	char 	our;
+	char	player;
 	char	**map;
 	char	**piece;
-	int		fd;
 	t_xy	map_size;
 	t_xy	piece_size;
-	t_xy	last_ennemy;
-	t_xy	last_player;
-}					t_filler;
+	t_xy	start_ennemy;
+	t_xy	start_player;
+}				t_filler;
 
+/*
+** init.c
+*/
 int				init_game(t_filler *f);
-int				get_position(t_filler *f);
+
+/*
+** main.c
+*/
+int				estimate_value(t_filler *f, int y, int x);
+
+/*
+** placement.c
+*/
+int				try_to_place_near(t_filler *f, t_xy *res);
+int				try_to_place_bottom(t_filler *f, t_xy *res);
+int				try_to_place_up(t_filler *f, t_xy *res);
+
+/*
+** misc.c
+*/
+int				get_size_piece(t_filler *f);
+void			copy_txy_value(t_xy *res, t_xy tmp);
+int				e_x_gt_p_x(t_filler *f);
+void			free_piece(t_filler *f);
+void			set_result(t_filler *f, t_xy *res, t_xy tmp);
 
 /*
 ** utility
