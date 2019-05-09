@@ -7,8 +7,6 @@ class Interface(Frame):
         self.pack(fill=BOTH)
 
         self.grid = [ [-1]*8  for n in range(8)] # list comprehension
-        self.grid[0][0] = 1
-        self.grid[7][7] = 1
         self.canvas = Canvas(self, width=550, height=820)
         self.canvas.pack()
         self.w = 50 # width of each cell
@@ -29,7 +27,7 @@ class Interface(Frame):
             y = y + self.w # move down
             x = 50 # rest to left edge
     def cliquer(self):
-        self.grid[0][0] = -1 * self.grid[0][0]
+        self.canvas.itemconfig(self.grid[0][0], fill='blue')
 
 
 
