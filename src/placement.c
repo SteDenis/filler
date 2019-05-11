@@ -76,15 +76,15 @@ int			try_to_place_up(t_filler *f, t_xy *res)
 	place.y = 0;
 	while (place.y < f->map_size.y)
 	{
-		place.x = (!(e_x_gt_p_x(f))) ? f->map_size.x - 1 : 0;
-		while ((!(e_x_gt_p_x(f))) ? place.x >= 0 : place.x < f->map_size.x)
+		place.x = ((e_x_gt_p_x(f))) ? f->map_size.x - 1 : 0;
+		while (((e_x_gt_p_x(f))) ? place.x >= 0 : place.x < f->map_size.x)
 		{
 			if (f->map[place.y][place.x] == f->player && try_it(f, place, &tmp))
 			{
 				copy_txy_value(res, tmp);
 				return (1);
 			}
-			place.x += (!(e_x_gt_p_x(f))) ? -1 : 1;
+			place.x += ((e_x_gt_p_x(f))) ? -1 : 1;
 		}
 		place.y++;
 	}

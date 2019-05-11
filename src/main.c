@@ -95,11 +95,11 @@ int			estimate_value(t_filler *f, int y, int x)
 	t_xy	coord;
 
 	count = 0;
-	i = y + 1;
-	while (i >= y - 1)
+	i = y + (f->map_size.y / 10);
+	while (i >= y - (f->map_size.y / 10))
 	{
-		j = x + 1;
-		while (j >= x - 1)
+		j = x + (f->map_size.y / 10);
+		while (j >= x - (f->map_size.y / 10))
 		{
 			coord.y = i;
 			coord.x = j;
