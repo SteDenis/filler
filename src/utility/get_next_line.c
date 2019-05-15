@@ -46,7 +46,7 @@ static	int		ft_check_charriot(char *buff, char **res)
 int				get_next_line(const int fd, char **line)
 {
 	static char		buff[BUFF_SIZE + 1];
-	int				i;
+	long			i;
 
 	if (fd < 0 || line == NULL)
 		return (-1);

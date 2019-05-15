@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "filler.h"
 #include <stdlib.h>
+#include "filler.h"
 
 static int	get_piece(t_filler *f)
 {
@@ -71,7 +71,7 @@ static int	get_result(t_filler *f)
 	res.value = -1;
 	res.x = 0;
 	res.y = 0;
-	if (!(try_to_place_near(f, &res)))
+	if (!(try_to_place_near(f, &res)) || (res.x == 0 && res.y == 0))
 	{
 		if (f->start_ennemy.y > f->start_player.y)
 			try_to_place_bottom(f, &res);
@@ -85,35 +85,6 @@ static int	get_result(t_filler *f)
 	if (res.x == 0 && res.y == 0)
 		return (0);
 	return (1);
-}
-
-int			estimate_value(t_filler *f, int y, int x)
-{
-	int		i;
-	int		j;
-	int		count;
-	t_xy	coord;
-
-	count = 0;
-	i = y + (f->map_size.y / 10);
-	while (i >= y - (f->map_size.y / 10))
-	{
-		j = x + (f->map_size.y / 10);
-		while (j >= x - (f->map_size.y / 10))
-		{
-			coord.y = i;
-			coord.x = j;
-			if (coord.x >= 0 && coord.y >= 0
-				&& coord.x <= f->map_size.x && coord.y < f->map_size.y)
-			{
-				if (f->map[coord.y][coord.x] == f->ennemy)
-					count++;
-			}
-			j--;
-		}
-		i--;
-	}
-	return (count);
 }
 
 int			main(void)

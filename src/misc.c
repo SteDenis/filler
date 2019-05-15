@@ -59,9 +59,9 @@ void		set_result(t_filler *f, t_xy *res, t_xy tmp)
 	{
 		if (tmp.value == res->value)
 		{
-			if (f->start_ennemy.y < f->start_player.y)
+			if (f->start_ennemy.y > f->start_player.y)
 				copy_txy_value(res, tmp);
-			else if ((!(e_x_gt_p_x(f))))
+			else if (((e_x_gt_p_x(f))))
 				copy_txy_value(res, tmp);
 		}
 		else

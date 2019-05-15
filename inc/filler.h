@@ -42,8 +42,9 @@ typedef struct	s_filler
 int				init_game(t_filler *f);
 
 /*
-** main.c
+** put_piece.c
 */
+int				put_piece(t_filler *f, t_xy *pos);
 int				estimate_value(t_filler *f, int y, int x);
 
 /*

@@ -12,34 +12,6 @@
 
 #include "filler.h"
 
-static int	put_piece(t_filler *f, t_xy *pos)
-{
-	int		i;
-	int		j;
-	int		count;
-
-	i = -1;
-	count = 0;
-	while (++i < f->piece_size.y)
-	{
-		j = -1;
-		while (++j < f->piece_size.x)
-			if (f->piece[i][j] == '*')
-			{
-				if (pos->y + i >= f->map_size.y || pos->x + j >= f->map_size.x)
-					return (0);
-				if (f->map[pos->y + i][pos->x + j] == f->player && ++count > 1)
-					return (0);
-				if (f->map[pos->y + i][pos->x + j] == f->ennemy)
-					return (0);
-				pos->value += estimate_value(f, pos->y + i, pos->x + j);
-			}
-	}
-	if (count < 1)
-		return (0);
-	return (1);
-}
-
 static int	try_it(t_filler *f, t_xy pos, t_xy *tmp)
 {
 	t_xy	res;
@@ -54,7 +26,7 @@ static int	try_it(t_filler *f, t_xy pos, t_xy *tmp)
 			res.y = pos.y - place.y;
 			res.x = pos.x - place.x;
 			res.value = 0;
-			if (res.x >= 0 && res.y >= 0 && f->piece[place.y][place.x] == '*'
+			if (f->piece[place.y][place.x] == '*'
 				&& res.y < f->map_size.y && res.x < f->map_size.x)
 			{
 				if (put_piece(f, &res))
@@ -68,6 +40,35 @@ static int	try_it(t_filler *f, t_xy pos, t_xy *tmp)
 	return (0);
 }
 
+static int	try_it_up(t_filler *f, t_xy pos, t_xy *tmp)
+{
+	t_xy	res;
+	t_xy	place;
+
+	place.y = f->piece_size.y;
+	while (--place.y >= 0)
+	{
+		place.x = ((e_x_gt_p_x(f))) ? f->piece_size.x - 1 : 0;
+		while (((e_x_gt_p_x(f))) ? place.x >= 0 : place.x < f->piece_size.x)
+		{
+			res.y = pos.y - place.y;
+			res.x = pos.x - place.x;
+			res.value = 0;
+			if (f->piece[place.y][place.x] == '*'
+				&& res.y < f->map_size.y && res.x < f->map_size.x)
+			{
+				if (put_piece(f, &res))
+				{
+					copy_txy_value(tmp, res);
+					return (1);
+				}
+			}
+			place.x += ((e_x_gt_p_x(f))) ? -1 : 1;
+		}
+	}
+	return (0);
+}
+
 int			try_to_place_up(t_filler *f, t_xy *res)
 {
 	t_xy	place;
@@ -76,10 +77,11 @@ int			try_to_place_up(t_filler *f, t_xy *res)
 	place.y = 0;
 	while (place.y < f->map_size.y)
 	{
-		place.x = ((e_x_gt_p_x(f))) ? f->map_size.x - 1 : 0;
+		place.x = ((e_x_gt_p_x(f))) ? f->map_size.x : 0;
 		while (((e_x_gt_p_x(f))) ? place.x >= 0 : place.x < f->map_size.x)
 		{
-			if (f->map[place.y][place.x] == f->player && try_it(f, place, &tmp))
+			if (f->map[place.y][place.x] == f->player
+				&& try_it_up(f, place, &tmp))
 			{
 				copy_txy_value(res, tmp);
 				return (1);
@@ -103,7 +105,8 @@ int			try_to_place_bottom(t_filler *f, t_xy *res)
 		place.x = (e_x_gt_p_x(f)) ? f->map_size.x - 1 : 0;
 		while ((e_x_gt_p_x(f)) ? place.x >= 0 : place.x < f->map_size.x)
 		{
-			if (f->map[place.y][place.x] == f->player && try_it(f, place, &tmp))
+			if (f->map[place.y][place.x] == f->player
+				&& try_it(f, place, &tmp))
 			{
 				copy_txy_value(res, tmp);
 				return (1);
@@ -127,7 +130,8 @@ int			try_to_place_near(t_filler *f, t_xy *res)
 		place.x = f->map_size.x - 1;
 		while (place.x >= 0)
 		{
-			if (f->map[place.y][place.x] == f->player && try_it(f, place, &tmp))
+			if (f->map[place.y][place.x] == f->player
+				&& try_it_up(f, place, &tmp))
 				set_result(f, res, tmp);
 			place.x--;
 		}

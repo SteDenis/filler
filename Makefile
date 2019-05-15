@@ -16,6 +16,7 @@ SRC		:=	\
 	main.c				\
 	init.c				\
 	misc.c				\
+	put_piece.c			\
 	placement.c			\
 	\
 	utility/ft_arrdel.c		\
@@ -89,7 +90,6 @@ $(NAME):	$(OBJ)
 	@ echo "$(OP_COLOR) building $(NAME)$(NO_COLOR)"
 	@ $(LD) -o $(NAME) $(OBJ) $(LDFLAG)
 	@ printf "$(DONE)$(OP_COLOR)$(NAME)$(NO_COLOR)\n"
-
 
 $(OBJDIR)/%.o:	$(SRCDIR)/%.c | $(OBJDIR) $(DEPDIR)
 	@ $(CC) -c $< $(CFLAGS) -o $@ \
