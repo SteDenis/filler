@@ -48,8 +48,8 @@ static int	try_it_up(t_filler *f, t_xy pos, t_xy *tmp)
 	place.y = f->piece_size.y;
 	while (--place.y >= 0)
 	{
-		place.x = ((e_x_gt_p_x(f))) ? f->piece_size.x - 1 : 0;
-		while (((e_x_gt_p_x(f))) ? place.x >= 0 : place.x < f->piece_size.x)
+		place.x = (!(e_x_gt_p_x(f))) ? f->piece_size.x - 1 : 0;
+		while ((!(e_x_gt_p_x(f))) ? place.x >= 0 : place.x < f->piece_size.x)
 		{
 			res.y = pos.y - place.y;
 			res.x = pos.x - place.x;
@@ -63,7 +63,7 @@ static int	try_it_up(t_filler *f, t_xy pos, t_xy *tmp)
 					return (1);
 				}
 			}
-			place.x += ((e_x_gt_p_x(f))) ? -1 : 1;
+			place.x += (!(e_x_gt_p_x(f))) ? -1 : 1;
 		}
 	}
 	return (0);
@@ -137,7 +137,7 @@ int			try_to_place_near(t_filler *f, t_xy *res)
 		}
 		place.y++;
 	}
-	if (res->value > 0)
+	if (res->value > 1)
 		return (1);
 	return (0);
 }

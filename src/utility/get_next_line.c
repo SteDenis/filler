@@ -22,7 +22,7 @@ static	int		ft_check_charriot(char *buff, char **res)
 
 	tofree = *res;
 	s = buff;
-	if (ft_strlen(buff) == 0)
+	if (buff[0] == '\0')
 		return (1);
 	if ((tmp = ft_strchr(buff, '\n')) != NULL)
 		s = ft_strsub(buff, 0, tmp - buff);
