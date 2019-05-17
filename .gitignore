@@ -2,6 +2,7 @@
 /stdenis.filler
 filler.trace
 log
+stdenis/
 
 ### Build ###
 # Temporary build files
